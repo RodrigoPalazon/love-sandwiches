@@ -5,7 +5,7 @@ from pprint import pprint
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive.file",
-    "https://www.googleapis.com/auth/drive"
+    "https://www.googleapis.com/auth/drive" 
     ]
 
 CREDS = Credentials.from_service_account_file('creds.json')
@@ -68,7 +68,7 @@ def update_sales_worksheeet(data):
     print("Sales worksheet updated successfully. \n")
 
 
-def calculate_surplus_data(sales_now):
+def calculate_surplus_data(sales_row):
     '''
       Compare sales with stock and calculate the surplus for each item type.
 
@@ -79,18 +79,27 @@ def calculate_surplus_data(sales_now):
     print("Calculating surplus data... \n")
     stock = SHEET.worksheet('stock').get_all_values()
     stock_row = stock[-1]
-    print(stock_row)
+    print(f"stock row: {stock_row}")
+    print(f"sales row: {sales_row}")
+
+    surplus_data = []
+    for stock, sales in zip(stock_row, sales_row):
+        surplus = int(stock) - sales
+        surplus_data.append(surplus)
+    
+    return surplus_data
 
 
 def main():
     '''
       Run all program functions
     '''
-    data = get_sales_data()  
+    data = get_sales_data() 
     sales_data = [int(num) for num in data]
     update_sales_worksheeet(sales_data)
-    calculate_surplus_data(sales_data)
-
+    new_surplus_data = calculate_surplus_data(sales_data)
+    print(new_surplus_data)
 
 print("Welcome to love Sandwiches Data Automation")
 main()
+
